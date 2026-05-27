@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Bea">
+<title>Bea – Tabletten</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F8F3E9;
+    --bg-card: #FFFFFF;
+    --text: #3A2E1F;
+    --text-soft: #8C7A5F;
+    --line: #E8DFD0;
+    --accent: #D4A574;
+    --accent-strong: #B8843D;
+    --success: #6B8E5A;
+    --success-bg: #E8F0E0;
+    --shadow: 0 2px 16px rgba(58, 46, 31, 0.06);
+    --shadow-lg: 0 8px 32px rgba(58, 46, 31, 0.12);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.4;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    padding: 24px 20px 60px;
+  }
+
+  .container {
+    max-width: 480px;
+    margin: 0 auto;
+  }
+
+  .greeting {
+    font-family: 'Lora', serif;
+    font-size: 26px;
+    color: var(--text-soft);
+    margin-bottom: 4px;
+    font-weight: 500;
+    font-style: italic;
+  }
+
+  .day-name {
+    font-family: 'Lora', serif;
+    font-size: 64px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    margin-bottom: 6px;
+  }
+
+  .date-line {
+    font-size: 20px;
+    color: var(--text-soft);
+    margin-bottom: 24px;
+  }
+
+  .time-of-day {
+    background: var(--bg-card);
+    border-radius: 18px;
+    padding: 18px 22px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .time-icon {
+    font-size: 44px;
+    line-height: 1;
+  }
+
+  .time-info { flex: 1; }
+
+  .time-period {
+    font-family: 'Lora', serif;
+    font-size: 30px;
+    font-weight: 600;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .time-now {
+    font-size: 18px;
+    color: var(--text-soft);
+  }
+
+  .status-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .status-pill {
+    background: var(--bg-card);
+    border-radius: 14px;
+    padding: 12px 8px;
+    text-align: center;
+    box-shadow: var(--shadow);
+    border: 2px solid transparent;
+  }
+
+  .status-pill.active {
+    border-color: var(--accent);
+    background: #FFF8EE;
+  }
+
+  .status-pill.taken { background: var(--success-bg); }
+
+  .status-pill-label {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-soft);
+  }
+
+  .status-pill-icon {
+    font-size: 22px;
+    line-height: 1;
+    font-weight: 700;
+  }
+
+  .status-pill-time {
+    font-size: 12px;
+    color: var(--success);
+    margin-top: 2px;
+    font-weight: 600;
+  }
+
+  .main-card {
+    background: var(--bg-card);
+    border-radius: 22px;
+    padding: 32px 24px;
+    box-shadow: var(--shadow-lg);
+    margin-bottom: 16px;
+    text-align: center;
+  }
+
+  .main-card.pending {
+    background: linear-gradient(180deg, #FFFCF6 0%, #FFFFFF 100%);
+    border: 3px solid var(--accent);
+  }
+
+  .main-card.done { background: var(--success-bg); }
+
+  .card-label {
+    font-size: 15px;
+    color: var(--accent-strong);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+  }
+
+  .card-title {
+    font-family: 'Lora', serif;
+    font-size: 34px;
+    font-weight: 700;
+    line-height: 1.15;
+    margin-bottom: 24px;
+  }
+
+  .big-button {
+    width: 100%;
+    background: var(--success);
+    color: white;
+    border: none;
+    padding: 22px;
+    border-radius: 16px;
+    font-family: 'Inter', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(107, 142, 90, 0.32);
+    transition: transform 0.1s, box-shadow 0.2s;
+    letter-spacing: 0.01em;
+  }
+
+  .big-button:active {
+    transform: scale(0.97);
+    box-shadow: 0 2px 8px rgba(107, 142, 90, 0.4);
+  }
+
+  .done-indicator {
+    font-size: 72px;
+    color: var(--success);
+    margin: 4px 0 12px;
+    line-height: 1;
+  }
+
+  .done-text {
+    font-family: 'Lora', serif;
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--success);
+    line-height: 1.3;
+  }
+
+  .speak-button {
+    width: 100%;
+    background: var(--bg-card);
+    color: var(--text);
+    border: 2px solid var(--line);
+    padding: 16px;
+    border-radius: 14px;
+    font-family: 'Inter', sans-serif;
+    font-size: 17px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .speak-button:active { background: var(--bg); }
+
+  .settings-icon {
+    position: fixed;
+    top: 14px;
+    right: 14px;
+    width: 40px;
+    height: 40px;
+    background: rgba(255,255,255,0.7);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid var(--line);
+    color: var(--text-soft);
+    font-size: 18px;
+    z-index: 10;
+  }
+
+  .settings-panel {
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    padding: 28px 22px;
+    z-index: 100;
+    overflow-y: auto;
+    display: none;
+  }
+
+  .settings-panel.open { display: block; }
+
+  .settings-panel h2 {
+    font-family: 'Lora', serif;
+    font-size: 30px;
+    margin-bottom: 22px;
+    font-weight: 700;
+  }
+
+  .setting-group {
+    background: var(--bg-card);
+    padding: 14px 16px;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    box-shadow: var(--shadow);
+  }
+
+  .setting-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 6px;
+    font-size: 15px;
+    color: var(--text-soft);
+  }
+
+  .setting-group input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    font-size: 17px;
+    font-family: inherit;
+    background: var(--bg);
+    color: var(--text);
+  }
+
+  .close-button {
+    width: 100%;
+    background: var(--text);
+    color: white;
+    border: none;
+    padding: 16px;
+    border-radius: 12px;
+    font-size: 17px;
+    font-weight: 600;
+    margin-top: 14px;
+    cursor: pointer;
+  }
+
+  .footer-note {
+    text-align: center;
+    color: var(--text-soft);
+    font-size: 13px;
+    margin-top: 24px;
+    line-height: 1.5;
+    padding: 0 12px;
+  }
+
+  @media (max-width: 380px) {
+    .day-name { font-size: 52px; }
+    .card-title { font-size: 28px; }
+    .big-button { font-size: 20px; padding: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<button class="settings-icon" id="settingsBtn" aria-label="Einstellungen">⚙</button>
+
+<div class="container" id="app"></div>
+
+<div class="settings-panel" id="settings">
+  <h2>Einstellungen</h2>
+
+  <div class="setting-group">
+    <label for="nameInput">Name</label>
+    <input type="text" id="nameInput" value="Bea">
+  </div>
+
+  <div class="setting-group">
+    <label for="morgenTime">Morgentabletten – Uhrzeit</label>
+    <input type="time" id="morgenTime" value="08:00">
+  </div>
+
+  <div class="setting-group">
+    <label for="mittagTime">Mittagtabletten – Uhrzeit</label>
+    <input type="time" id="mittagTime" value="12:00">
+  </div>
+
+  <div class="setting-group">
+    <label for="abendTime">Abendtabletten – Uhrzeit</label>
+    <input type="time" id="abendTime" value="18:00">
+  </div>
+
+  <button class="close-button" id="saveBtn">Speichern und schliessen</button>
+</div>
+
+<script>
+  const defaultSettings = {
+    name: 'Bea',
+    times: { morgen: '08:00', mittag: '12:00', abend: '18:00' }
+  };
+
+  let settings = JSON.parse(localStorage.getItem('beaSettings') || 'null') || defaultSettings;
+  let dayState = JSON.parse(localStorage.getItem('beaState') || 'null') || { date: null, morgen: null, mittag: null, abend: null };
+  let speechEnabled = false;
+
+  function todayKey() {
+    const d = new Date();
+    return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+  }
+
+  function checkResetDay() {
+    if (dayState.date !== todayKey()) {
+      dayState = { date: todayKey(), morgen: null, mittag: null, abend: null };
+      saveState();
+    }
+  }
+
+  function saveState() {
+    localStorage.setItem('beaState', JSON.stringify(dayState));
+  }
+
+  function saveSettings() {
+    localStorage.setItem('beaSettings', JSON.stringify(settings));
+  }
+
+  function dayName() {
+    return ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'][new Date().getDay()];
+  }
+
+  function dateString() {
+    const d = new Date();
+    const months = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+    return `${d.getDate()}. ${months[d.getMonth()]} ${d.getFullYear()}`;
+  }
+
+  function timeString() {
+    const d = new Date();
+    return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+  }
+
+  function timeToMin(t) {
+    const [h,m] = t.split(':').map(Number);
+    return h*60+m;
+  }
+
+  function currentMin() {
+    const d = new Date();
+    return d.getHours()*60+d.getMinutes();
+  }
+
+  function currentPeriod() {
+    const h = new Date().getHours();
+    if (h >= 5 && h < 11) return { name: 'Morgen', icon: '☀️' };
+    if (h >= 11 && h < 14) return { name: 'Mittag', icon: '🌞' };
+    if (h >= 14 && h < 17) return { name: 'Nachmittag', icon: '🌤️' };
+    if (h >= 17 && h < 22) return { name: 'Abend', icon: '🌙' };
+    return { name: 'Nacht', icon: '✨' };
+  }
+
+  function activeDose() {
+    const now = currentMin();
+    const doses = [
+      { key: 'morgen', label: 'Morgentabletten', short: 'Morgen', time: settings.times.morgen },
+      { key: 'mittag', label: 'Mittagtabletten', short: 'Mittag', time: settings.times.mittag },
+      { key: 'abend', label: 'Abendtabletten', short: 'Abend', time: settings.times.abend }
+    ];
+    for (const d of doses) {
+      if (!dayState[d.key] && now >= timeToMin(d.time) - 15) return d;
+    }
+    for (const d of doses) {
+      if (!dayState[d.key]) return d;
+    }
+    return null;
+  }
+
+  function render() {
+    checkResetDay();
+    const period = currentPeriod();
+    const dose = activeDose();
+    const allDone = !dose;
+    const doseIsDue = dose && currentMin() >= timeToMin(dose.time) - 15;
+
+    const doses = [
+      { key: 'morgen', label: 'Morgen' },
+      { key: 'mittag', label: 'Mittag' },
+      { key: 'abend', label: 'Abend' }
+    ];
+
+    const statusPills = doses.map(d => {
+      const taken = dayState[d.key];
+      const isActive = dose && dose.key === d.key && doseIsDue;
+      const cls = taken ? 'taken' : (isActive ? 'active' : '');
+      const icon = taken ? '✓' : (isActive ? '!' : '○');
+      const color = taken ? 'var(--success)' : (isActive ? 'var(--accent-strong)' : 'var(--text-soft)');
+      const timeStr = taken ? `<div class="status-pill-time">${taken}</div>` : '';
+      return `<div class="status-pill ${cls}">
+        <div class="status-pill-label">${d.label}</div>
+        <div class="status-pill-icon" style="color:${color}">${icon}</div>
+        ${timeStr}
+      </div>`;
+    }).join('');
+
+    let mainCard;
+    if (allDone) {
+      mainCard = `
+        <div class="main-card done">
+          <div class="done-indicator">✓</div>
+          <div class="done-text">Du hast heute<br>alle Tabletten<br>genommen.</div>
+        </div>`;
+    } else if (doseIsDue) {
+      mainCard = `
+        <div class="main-card pending">
+          <div class="card-label">Jetzt fällig</div>
+          <div class="card-title">${dose.label}<br>nehmen</div>
+          <button class="big-button" id="takeBtn">✓ &nbsp; Genommen</button>
+        </div>`;
+    } else {
+      mainCard = `
+        <div class="main-card">
+          <div class="card-label">Nächste Tabletten</div>
+          <div class="card-title">${dose.label}<br>um ${dose.time} Uhr</div>
+        </div>`;
+    }
+
+    document.getElementById('app').innerHTML = `
+      <div class="greeting">Hallo ${settings.name},</div>
+      <div class="day-name">${dayName()}</div>
+      <div class="date-line">${dateString()}</div>
+
+      <div class="time-of-day">
+        <div class="time-icon">${period.icon}</div>
+        <div class="time-info">
+          <div class="time-period">${period.name}</div>
+          <div class="time-now">Es ist ${timeString()} Uhr</div>
+        </div>
+      </div>
+
+      <div class="status-row">${statusPills}</div>
+
+      ${mainCard}
+
+      <button class="speak-button" id="speakBtn">🔊 &nbsp; Erinnerung anhören</button>
+
+      <div class="footer-note">
+        Diese Seite muss geöffnet bleiben,<br>damit die Sprach-Erinnerungen funktionieren.
+      </div>
+    `;
+
+    const takeBtn = document.getElementById('takeBtn');
+    if (takeBtn) {
+      takeBtn.onclick = () => {
+        const d = activeDose();
+        if (d) {
+          dayState[d.key] = timeString();
+          saveState();
+          enableSpeech();
+          speak(`Sehr gut, ${settings.name}. Deine ${d.label} sind eingetragen.`);
+          render();
+        }
+      };
+    }
+
+    document.getElementById('speakBtn').onclick = () => {
+      enableSpeech();
+      announce(true);
+    };
+  }
+
+  function enableSpeech() {
+    if (!speechEnabled && window.speechSynthesis) {
+      const u = new SpeechSynthesisUtterance(' ');
+      u.volume = 0;
+      speechSynthesis.speak(u);
+      speechEnabled = true;
+    }
+  }
+
+  function speak(text) {
+    if (!window.speechSynthesis) return;
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'de-DE';
+    u.rate = 0.9;
+    u.pitch = 1.0;
+    const voices = speechSynthesis.getVoices();
+    const de = voices.find(v => v.lang && v.lang.startsWith('de'));
+    if (de) u.voice = de;
+    speechSynthesis.speak(u);
+  }
+
+  function announce(manual = false) {
+    const dose = activeDose();
+    const period = currentPeriod();
+    if (!dose) {
+      speak(`Hallo ${settings.name}. Du hast heute schon alle Tabletten genommen. Sehr gut.`);
+      return;
+    }
+    const isDue = currentMin() >= timeToMin(dose.time) - 15;
+    if (isDue) {
+      speak(`Hallo ${settings.name}. Heute ist ${dayName()} ${period.name}. Es ist Zeit für deine ${dose.label}. Bitte tippe auf den grünen Knopf, wenn du sie genommen hast.`);
+    } else if (manual) {
+      speak(`Hallo ${settings.name}. Heute ist ${dayName()}. Deine nächsten Tabletten kommen um ${dose.time} Uhr. Das sind die ${dose.label}.`);
+    }
+  }
+
+  let lastAnnouncedDose = null;
+  function checkAutoAnnounce() {
+    const dose = activeDose();
+    if (!dose) { lastAnnouncedDose = null; return; }
+    if (dayState[dose.key]) { lastAnnouncedDose = null; return; }
+    const now = currentMin();
+    const dt = timeToMin(dose.time);
+    if (now >= dt && now < dt + 2 && lastAnnouncedDose !== dose.key) {
+      lastAnnouncedDose = dose.key;
+      announce();
+    }
+  }
+
+  document.getElementById('settingsBtn').onclick = () => {
+    document.getElementById('nameInput').value = settings.name;
+    document.getElementById('morgenTime').value = settings.times.morgen;
+    document.getElementById('mittagTime').value = settings.times.mittag;
+    document.getElementById('abendTime').value = settings.times.abend;
+    document.getElementById('settings').classList.add('open');
+  };
+
+  document.getElementById('saveBtn').onclick = () => {
+    settings.name = document.getElementById('nameInput').value.trim() || 'Bea';
+    settings.times.morgen = document.getElementById('morgenTime').value;
+    settings.times.mittag = document.getElementById('mittagTime').value;
+    settings.times.abend = document.getElementById('abendTime').value;
+    saveSettings();
+    document.getElementById('settings').classList.remove('open');
+    render();
+  };
+
+  if (typeof speechSynthesis !== 'undefined' && speechSynthesis.onvoiceschanged !== undefined) {
+    speechSynthesis.onvoiceschanged = () => {};
+  }
+
+  render();
+  setInterval(() => { render(); checkAutoAnnounce(); }, 60000);
+  setInterval(checkAutoAnnounce, 15000);
+</script>
+
+</body>
+</html>
